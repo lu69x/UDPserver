@@ -17,14 +17,14 @@ server.on('message',(msg, rinfo)=>{
     console.log('ASCII: ' + msg);
     if(msg.slice(0,1)=='N'){
         var ack0 = new Buffer(msg)
-        server.send(ack0, 0, ack.length, rinfo.port, rinfo.address, (err,bytes)=>{
+        server.send(ack0, 0, ack0.length, rinfo.port, rinfo.address, (err,bytes)=>{
                 nodeObj.addr = rinfo.address
                 nodeObj.port = rinfo.port
             console.log('Node => Server')
         })
     }else if(msg.slice(0,3)=='CLI'){
         var ack1 = new Buffer(msg)
-            server.send(ack1, 0, ack.length, nodeObj.port, nodeObj.addr, (err,bytes)=>{
+            server.send(ack1, 0, ack1.length, nodeObj.port, nodeObj.addr, (err,bytes)=>{
             console.log('Client => Node')
         })  
     }
