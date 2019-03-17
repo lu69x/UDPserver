@@ -10,7 +10,7 @@ server.on('listening',()=>{
 server.on('message',(msg, rinfo)=>{
     console.log('server got a message from ' + rinfo.address + ':' + rinfo.port);
     console.log('ASCII: ' + msg);
-    var ack = new Buffer(msg)
+    var ack = new Buffer.alloc(msg)
     server.send(ack, 0, ack.length, rinfo.port, rinfo.address, (err,bytes)=>{
         console.log('sent back')
     })    
