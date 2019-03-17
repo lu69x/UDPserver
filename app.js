@@ -16,15 +16,15 @@ server.on('message',(msg, rinfo)=>{
     console.log('server got a message from ' + rinfo.address + ':' + rinfo.port);
     console.log('ASCII: ' + msg);
     if(msg.slice(0,1)=='N'){
-        var ack = new Buffer(msg)
-            server.send(ack, 0, ack.length, rinfo.port, rinfo.address, (err,bytes)=>{
+        var ack0 = new Buffer(msg)
+        server.send(ack0, 0, ack.length, rinfo.port, rinfo.address, (err,bytes)=>{
                 nodeObj.addr = rinfo.address
                 nodeObj.port = rinfo.port
             console.log('Node => Server')
-        })  
+        })
     }else if(msg.slice(0,3)=='CLI'){
-        var ack = new Buffer(msg)
-            server.send(ack, 0, ack.length, nodeObj.port, nodeObj.addr, (err,bytes)=>{
+        var ack1 = new Buffer(msg)
+            server.send(ack1, 0, ack.length, nodeObj.port, nodeObj.addr, (err,bytes)=>{
             console.log('Client => Node')
         })  
     }
