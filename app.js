@@ -3,8 +3,8 @@ var dgram = require('dgram')
 var server = dgram.createSocket('udp4')
 
 var nodeObj = {
-    addr = '',
-    port = ''
+    addr : '',
+    port : ''
 }
 
 server.on('listening',()=>{
