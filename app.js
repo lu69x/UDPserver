@@ -29,7 +29,7 @@ server.on('message',(msg, rinfo)=>{
     if(msg[0]=="N"){
         n_addr = rinfo.address
         n_port = rinfo.port
-        console.log('Node => Client')
+        console.log('Node => Client : ' + msg)
         /*
         var ack = new Buffer(msg)
             server.send(ack, 0, ack.length, rinfo.port, rinfo.address, (err,bytes)=>{
@@ -38,7 +38,7 @@ server.on('message',(msg, rinfo)=>{
     }else if(msg.slice(0,3)=="CLI"){
         var ack = new Buffer(msg.slice(3))
             server.send(ack, 0, ack.length, n_port, n_addr, (err,bytes)=>{
-                console.log('Client => node')
+                console.log('Client => node : ' + msg)
         })    
     }else if(msg.slice(0,3)=="SER"){
         /*
