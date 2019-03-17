@@ -18,7 +18,7 @@ server.on('message',(msg, rinfo)=>{
     if(msg.slice(0,1)=='N'){
         var ack = new Buffer(msg)
             server.send(ack, 0, ack.length, rinfo.port, rinfo.address, (err,bytes)=>{
-                nodeObj.addr = rinfo.addr
+                nodeObj.addr = rinfo.address
                 nodeObj.port = rinfo.port
             console.log('Node => Server')
         })  
