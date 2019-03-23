@@ -2,11 +2,6 @@ var s_port = 41234
 var dgram = require('dgram')
 var server = dgram.createSocket('udp4')
 
-var nodeObj = {
-    addr : '',
-    port : ''
-}
-
 server.on('listening',()=>{
     var address = server.address()
     console.log('Server listening ' + address.address + ':' + address.port)
@@ -22,12 +17,9 @@ server.on('message',(msg, rinfo)=>{
                 nodeObj.port = rinfo.port
             console.log('Node => Server')
         })
-    }else if(msg.slice(0,3)=='CLI'){
-        var ack1 = new Buffer(msg)
-            server.send(ack1, 0, ack1.length, nodeObj.port, nodeObj.addr, (err,bytes)=>{
-            console.log('Client => Node')
-        })  
     }
+
+    
 })
 
 server.on('error',(err)=>{
