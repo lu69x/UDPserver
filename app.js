@@ -117,8 +117,8 @@ server.on('message',(msg, rinfo)=>{
             })
     }
     else if(msg.slice(0,1)=='C'){
-        if(json.data.length > 3){
-            connection.find({data:node}).then((docs)=>{
+        if(json.data.length > 4){
+            connection.find({data:json.data.slice(1,4)}).then((docs)=>{
                 if(Object.keys(docs).length != 0){
                     var ack = new Buffer(json.data)
                     server.send(ack, 0, ack.length, json.port, json.address, (err,bytes)=>{
@@ -127,6 +127,8 @@ server.on('message',(msg, rinfo)=>{
                 }
             }, (err)=>{})
         }
+    }else{
+        console.log('---Error command---\nPlease check your command before send!')
     }
 })
 
