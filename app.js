@@ -19,21 +19,23 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/Mydb').th
 })
 
 var connectSchema = new Schema({
-    data:{type:String, required:true},
+    node:{type:String, required:true},
     addr:{type:String, required:true},
-    port:{type:String, required:true}
+    port:{type:String, required:true},
+    date:{type:String, required:true}
 })
 
 var connection = mongoose.model('routing', connectSchema)
 
 //HTTP JSON
 app.post('/post', (req,res)=>{
-    let data = new connection({
-        data:req.body.data,
+    let buffer = new connection({
+        node:req.body.node,
         addr:req.body.addr,
-        port:req.body.port
+        port:req.body.port,
+        date:new Date().toLocaleString()
     })
-    data.save().then((docs)=>{
+    buffer.save().then((docs)=>{
         res.send(docs)        
     }, (err)=>{
         res.status(400).send(err)
@@ -52,8 +54,8 @@ app.get('/getall',(req,res)=>{
     })
 })
 
-app.get('/getbydata/:data', (req,res)=>{
-    connection.find({data:req.params.data}).then((docs)=>{
+app.get('/getbynode/:node', (req,res)=>{
+    connection.find({node:req.params.node}).then((docs)=>{
         res.send(docs)
     }, (err)=>{
         res.send(err)
@@ -68,8 +70,8 @@ app.get('/dropall', (req,res)=>{
     })
 })
 
-app.get('/dropbydata/:data', (req,res)=>{
-    connection.deleteOne({data:req.params.data}).then((docs)=>{
+app.get('/dropbynode/:node', (req,res)=>{
+    connection.deleteOne({node:req.params.node}).then((docs)=>{
         res.send(docs)
     }, (err)=>{
         res.send(err)
@@ -89,16 +91,52 @@ server.on('listening',()=>{
 
 
 //UDP server
-//format lenght 5 bytes
 server.on('message',(msg, rinfo)=>{
     console.log('server got a message from ' + rinfo.address + ':' + rinfo.port);
     console.log('ASCII: ' + msg);
-    var ack = new Buffer(json.data)
-    server.send(ack, 0, ack.length, json.port, json.address, (err,bytes)=>{
-        console.log('Client => Node : ' + ack)
-    })
+    if(msg.slice(0,1)=='N'){            //From node
+        if(msg.slice(1,2)=='S'){
+            connection.find({node:msg.slice(2,6)}).then((docs)=>{
+                if(Object.keys(docs).length!=0){
+                    connection.updateOne({node:msg.slice(2,6)},{
+                        node:msg.slice(2,6),
+                        addr:rinfo.address,
+                        port:rinfo.port,
+                        date:new Date().toLocaleString()
+                    })
+                }else{
+                    let buffer = new connection({
+                        node:msg.slice(2,6),
+                        addr:rinfo.address,
+                        port:rinfo.port,
+                        date:new Date().toLocaleString()
+                    })
+                    buffer.save().then((d)=>{
+                        console.log(d)
+                    },(e)=>{
+                        console.log(e)
+                    })
+                }
+            }, (err)=>{
+                console.log(err)
+            })
+        }else if(msg.slice(1,2)=='C'){
 
-    
+        }
+    }else if(msg.slice(0,1)=='C'){       //From client
+        if(msg.slice(1,2)=='S'){
+
+        }else if(msg.slice(1,2)=='N'){
+
+        }
+    }else if(msg.slice(0,1)=='S'){       //From server
+        if(msg.slice(1,2)=='N'){
+
+        }else if(msg.slice(1,2)=='C'){
+
+        }
+    }
+
 })
 
 server.on('error',(err)=>{
@@ -111,3 +149,10 @@ server.on('close',()=>{
 })
 
 server.bind(s_port)
+
+function UDPsend(dir, msg, addr, port){
+    var ack = new Buffer(msg)
+    server.send(ack, 0, ack.length, port, address, (err,bytes)=>{
+        console.log(dir)
+    })
+}

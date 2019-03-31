@@ -1,17 +1,17 @@
 # UDP Server
 ## Communication formatting detail.  
-> Version 0.8.0 :  
-    - Data format 5 bytes  
+> Version 0.8.1 :  
+    - Data format 8 bytes  
     - Support 65,535 node  
     - Add routing table  
     - Add query API
 
 
-**All data use in `HEXADECIMAL` format.**
+**All data use in `HEXADECIMAL`(Character) format**
 
 Data format:  
-- Data lenght 5 bytes
-- | Direction 2 bytes | Target 2 bytes | Command 1 bytes |
+- Data lenght 8 bytes
+- | Direction 2 bytes | Target 4 bytes | Command 2 bytes |
 ---
 
 ## Direction
@@ -27,6 +27,7 @@ CS|Client => Server
 
 ## Traget
 > This code is support `65,535` node  
+Because, This code base on HEX, But define by character
 
 Traget code use only define node.  
 Example:
