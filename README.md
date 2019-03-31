@@ -27,7 +27,7 @@ CS|Client => Server
 
 ## Traget
 > This code is support `65,535` node  
-Because, This code base on HEX, But define by character
+Because, This code base on HEX, But define by character.
 
 Traget code use only define node.  
 Example:
