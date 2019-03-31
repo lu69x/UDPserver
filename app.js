@@ -89,47 +89,16 @@ server.on('listening',()=>{
 
 
 //UDP server
+//format lenght 5 bytes
 server.on('message',(msg, rinfo)=>{
     console.log('server got a message from ' + rinfo.address + ':' + rinfo.port);
     console.log('ASCII: ' + msg);
+    var ack = new Buffer(json.data)
+    server.send(ack, 0, ack.length, json.port, json.address, (err,bytes)=>{
+        console.log('Client => Node : ' + ack)
+    })
 
-    let json = {
-        data:msg.toString('utf-8'),
-        addr:rinfo.address,
-        port:rinfo.port
-    }
-
-    if(msg.slice(0,1)=='N'){
-        connection.find({data:json.data}).then((docs)=>{
-            if(Object.keys(docs).length != 0){
-                connection.updateOne({str:data}, json,(err, res)=>{
-                    console.log(str)
-                })
-            }else{
-                let data = new connection(json)
-                data.save().then((docs)=>{}, (err)=>{})
-            }
-        }, (err)=>{
-        })
-        var ack = new Buffer('S00')
-            server.send(ack, 0, ack.length, rinfo.port, rinfo.address, (err,bytes)=>{
-                console.log('Server => Node : ' + ack)
-            })
-    }
-    else if(msg.slice(0,1)=='C'){
-        if(json.data.length > 4){
-            connection.find({data:json.data.slice(1,4)}).then((docs)=>{
-                if(Object.keys(docs).length != 0){
-                    var ack = new Buffer(json.data)
-                    server.send(ack, 0, ack.length, json.port, json.address, (err,bytes)=>{
-                        console.log('Client => Node : ' + ack)
-                    })
-                }
-            }, (err)=>{})
-        }
-    }else{
-        console.log('---Error command---\nPlease check your command before send!')
-    }
+    
 })
 
 server.on('error',(err)=>{
