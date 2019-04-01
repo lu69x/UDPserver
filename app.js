@@ -1,7 +1,7 @@
 var express = require('express')
 var bodyParser = require('body-parser')
 var mongoose = require('mongoose')
-var a_port = 41235
+var a_port = 9000
 
 var dgram = require('dgram')
 var server = dgram.createSocket('udp4')
@@ -98,11 +98,15 @@ server.on('message',(msg, rinfo)=>{
         if(msg.slice(1,2)=='S'){
             connection.find({node:msg.slice(2,6)}).then((docs)=>{
                 if(Object.keys(docs).length!=0){
-                    connection.updateOne({node:msg.slice(2,6)},{
+                    connection.update({node:msg.slice(2,6)},{
                         node:msg.slice(2,6),
                         addr:rinfo.address,
                         port:rinfo.port,
                         date:new Date().toLocaleString()
+                    },(d)=>{
+                        console.log(d)
+                    },(e)=>{
+                        console.log(e)
                     })
                 }else{
                     let buffer = new connection({
