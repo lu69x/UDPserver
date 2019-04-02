@@ -82,7 +82,7 @@ app.post('/post', (req,res)=>{
     })
 })
 
-app.post('/updatenode/:node', (req,res)=>{
+app.post('/updatenode', (req,res)=>{
     connection.findOneAndUpdate({node:req.body.node},{
         addr : req.body.addr,
         port : req.body.port,
