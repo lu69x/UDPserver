@@ -83,14 +83,16 @@ app.post('/post', (req,res)=>{
 })
 
 app.post('/updatenode', (req,res)=>{
-    connection.findOneAndUpdate({node:req.body.node},{
-        addr : req.body.addr,
-        port : req.body.port,
-        date : new Date()
-    },(docs)=>{
-        console.log(docs)
-    },(err)=>{
-        console.log(err)
+    connection.deleteOne({node:req.body.node}).then((docs)=>{
+        let buffer = new connection({
+            node:req.body.node,
+            addr:req.body.addr,
+            port:req.body.port,
+            date:new Date().toLocaleString()
+        })
+        buffer.save().then((docs)=>{
+            res.send(docs)        
+        })
     })
 })
 
@@ -108,21 +110,23 @@ server.on('message',(msg, rinfo)=>{
         if(msg.slice(1,2)=='S'){
             connection.find({node:msg.slice(2,6)}).then((docs)=>{
                 if(Object.keys(docs).length!=0){
-                    connection.findOneAndUpdate({node:msg.slice(2,6)},{
-                        addr : rinfo.address,
-                        port : rinfo.port,
-                        date : new Date()
-                    },(docs)=>{
-                        console.log(docs)
-                    },(err)=>{
-                        console.log(err)
+                    connection.deleteOne({node:req.body.node}).then((docs)=>{
+                        let buffer = new connection({
+                            node:req.body.node,
+                            addr:req.body.addr,
+                            port:req.body.port,
+                            date:new Date()
+                        })
+                        buffer.save().then((docs)=>{
+                            res.send(docs)        
+                        })
                     })
                 }else{
                     let buffer = new connection({
                         node:msg.slice(2,6),
                         addr:rinfo.address,
                         port:rinfo.port,
-                        date:new Date().toLocaleString()
+                        date:new Date()
                     })
                     buffer.save().then((docs)=>{
                         console.log(docs)
