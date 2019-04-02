@@ -109,19 +109,7 @@ server.on('message',(msg, rinfo)=>{
     if(msg.slice(0,1)=='N'){            //From node
         if(msg.slice(1,2)=='S'){
             connection.find({node:msg.slice(2,6)}).then((docs)=>{
-                if(Object.keys(docs).length!=0){
-                    connection.deleteOne({node:msg.slice(2,6)}).then((docs)=>{
-                        let buffer = new connection({
-                            node:msg.slice(2,6),
-                            addr:rinfo.address,
-                            port:rinfo.port,
-                            date:new Date()
-                        })
-                        buffer.save().then((docs)=>{
-                            res.send(docs)        
-                        })
-                    })
-                }else{
+                connection.deleteOne({node:msg.slice(2,6)}).then((docs)=>{
                     let buffer = new connection({
                         node:msg.slice(2,6),
                         addr:rinfo.address,
@@ -129,11 +117,9 @@ server.on('message',(msg, rinfo)=>{
                         date:new Date()
                     })
                     buffer.save().then((docs)=>{
-                        console.log(docs)
-                    },(err)=>{
-                        console.log(err)
+                        res.send(docs)        
                     })
-                }
+                })
             }, (err)=>{
                 console.log(err)
             })
