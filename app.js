@@ -28,20 +28,6 @@ var connectSchema = new Schema({
 var connection = mongoose.model('routing', connectSchema)
 
 //HTTP JSON
-app.post('/post', (req,res)=>{
-    let buffer = new connection({
-        node:req.body.node,
-        addr:req.body.addr,
-        port:req.body.port,
-        date:new Date().toLocaleString()
-    })
-    buffer.save().then((docs)=>{
-        res.send(docs)        
-    }, (err)=>{
-        res.status(400).send(err)
-    })
-})
-
 app.get('/', (req,res)=>{
     res.send('WU Lighting control')
 })
@@ -82,7 +68,31 @@ app.listen(a_port, ()=>{
     console.log('Application listening 127.0.0.1: ' + a_port)
 })
 
+app.post('/post', (req,res)=>{
+    let buffer = new connection({
+        node:req.body.node,
+        addr:req.body.addr,
+        port:req.body.port,
+        date:new Date().toLocaleString()
+    })
+    buffer.save().then((docs)=>{
+        res.send(docs)        
+    }, (err)=>{
+        res.status(400).send(err)
+    })
+})
 
+app.post('/updatenode/:node', (req,res)=>{
+    connection.findOneAndUpdate({node:req.body.node},{
+        addr : req.body.addr,
+        port : req.body.port,
+        date : new Date()
+    },(docs)=>{
+        console.log(docs)
+    },(err)=>{
+        console.log(err)
+    })
+})
 
 server.on('listening',()=>{
     var address = server.address()
@@ -98,15 +108,14 @@ server.on('message',(msg, rinfo)=>{
         if(msg.slice(1,2)=='S'){
             connection.find({node:msg.slice(2,6)}).then((docs)=>{
                 if(Object.keys(docs).length!=0){
-                    connection.update({node:msg.slice(2,6)},{
-                        node:msg.slice(2,6),
-                        addr:rinfo.address,
-                        port:rinfo.port,
-                        date:new Date().toLocaleString()
-                    },(d)=>{
-                        console.log(d)
-                    },(e)=>{
-                        console.log(e)
+                    connection.findOneAndUpdate({node:msg.slice(2,6)},{
+                        addr : rinfo.address,
+                        port : rinfo.port,
+                        date : new Date()
+                    },(docs)=>{
+                        console.log(docs)
+                    },(err)=>{
+                        console.log(err)
                     })
                 }else{
                     let buffer = new connection({
@@ -115,10 +124,10 @@ server.on('message',(msg, rinfo)=>{
                         port:rinfo.port,
                         date:new Date().toLocaleString()
                     })
-                    buffer.save().then((d)=>{
-                        console.log(d)
-                    },(e)=>{
-                        console.log(e)
+                    buffer.save().then((docs)=>{
+                        console.log(docs)
+                    },(err)=>{
+                        console.log(err)
                     })
                 }
             }, (err)=>{
