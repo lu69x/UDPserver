@@ -108,20 +108,16 @@ server.on('message',(msg, rinfo)=>{
     console.log('ASCII: ' + msg);
     if(msg.slice(0,1)=='N'){            //From node
         if(msg.slice(1,2)=='S'){
-            connection.find({node:msg.slice(2,6)}).then((docs)=>{
-                connection.deleteOne({node:msg.slice(2,6)}).then((docs)=>{
-                    let buffer = new connection({
-                        node:msg.slice(2,6),
-                        addr:rinfo.address,
-                        port:rinfo.port,
-                        date:new Date()
-                    })
-                    buffer.save().then((docs)=>{
-                        res.send(docs)        
-                    })
+            connection.deleteOne({node:msg.slice(2,6)}).then((docs)=>{
+                let buffer = new connection({
+                    node:msg.slice(2,6),
+                    addr:rinfo.address,
+                    port:rinfo.port,
+                    date:new Date()
                 })
-            }, (err)=>{
-                console.log(err)
+                buffer.save().then((docs)=>{
+                    console.log(docs)        
+                })
             })
         }else if(msg.slice(1,2)=='C'){
 
