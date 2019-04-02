@@ -110,11 +110,11 @@ server.on('message',(msg, rinfo)=>{
         if(msg.slice(1,2)=='S'){
             connection.find({node:msg.slice(2,6)}).then((docs)=>{
                 if(Object.keys(docs).length!=0){
-                    connection.deleteOne({node:req.body.node}).then((docs)=>{
+                    connection.deleteOne({node:msg.slice(2,6)}).then((docs)=>{
                         let buffer = new connection({
-                            node:req.body.node,
-                            addr:req.body.addr,
-                            port:req.body.port,
+                            node:msg.slice(2,6),
+                            addr:rinfo.address,
+                            port:rinfo.port,
                             date:new Date()
                         })
                         buffer.save().then((docs)=>{
