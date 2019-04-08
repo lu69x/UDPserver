@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>IoT Server</title>
+    <style media="screen">
+      body{
+        background: indianred;color: #ffffff;padding: 30px;
+      }
+      h1{
+        text-align: center
+      }
+      h2{
+        text-align: center
+      }
+      p{
+        text-align: left; size: 20px
+      }
+      table{
+        padding: 30px
+      }
+    </style>
+  </head>
+  <body>
+    <h1>WU LoRa lighting control</h1>
+    <h1>Current time :<%=serverTime%></h1>
+    <p>--------- RestFul API ----------</p>
+    <p>- /get       : View all JSON object</p>
+    <p>- /countObj  : Count object</p>
+    <p>--------------------------------</p><br><br>
+    <p>--------- Menu ----------</p>
+    <% include menu.ejs %>
+    <p>--------------------------------</p><br><br>
+  </body>
+</html>

@@ -1,6 +1,8 @@
 var express = require('express')
 var bodyParser = require('body-parser')
 var mongoose = require('mongoose')
+var ejs = require('ejs')
+var passwdDrop = 'qwertyuiop'
 var a_port = 9000
 
 var dgram = require('dgram')
@@ -9,6 +11,8 @@ var s_port = 41234
 
 var app = express()
 app.use(bodyParser.json())
+//app.use(express.static('/src'))
+app.set('view engine', 'ejs')
 var Schema = mongoose.Schema
 mongoose.Promise = global.Promise
 
@@ -29,7 +33,7 @@ var connection = mongoose.model('routing', connectSchema)
 
 //HTTP JSON
 app.get('/', (req,res)=>{
-    res.send('WU Lighting control')
+    res.render('index',{serverTime: new Date()})
 })
 
 app.get('/getall',(req,res)=>{
@@ -48,12 +52,17 @@ app.get('/getbynode/:node', (req,res)=>{
     })
 })
 
+app.get('/drop',(req, res)=>{
+    res.sendFile(__dirname+'/src/dropFrom.html')
+  })
 app.get('/dropall', (req,res)=>{
-    connection.remove().then((docs)=>{
-        res.send(docs)
-    }, (err)=>{
-        res.send(err)
-    })
+    if(req.query.passwd==passwdDrop){
+        connection.remove().then((docs)=>{
+            res.send(docs)
+        }, (err)=>{
+            res.send(err)
+        })
+    }
 })
 
 app.get('/dropbynode/:node', (req,res)=>{
@@ -95,6 +104,11 @@ app.post('/updatenode', (req,res)=>{
         })
     })
 })
+
+app.get('/:xxx',(req,res)=>{
+    res.render('err')
+})
+
 
 server.on('listening',()=>{
     var address = server.address()
